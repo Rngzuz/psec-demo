@@ -1,0 +1,45 @@
+/*************************************/
+/**** BORDER-PANE ********************/
+/*************************************/
+.border-pane {
+    -fx-background-color: #2e3338;
+    -fx-padding: 8 16;
+}
+
+/*************************************/
+/**** LABEL **************************/
+/*************************************/
+.label {
+    -fx-text-fill: #dcddde;
+    -fx-wrap-text: true;
+    -fx-padding: 8 16;
+}
+
+.label:hover {
+    -fx-background-color: linear-gradient(from 40% 40% to 100% 100%, #2e3338, #36393f);
+}
+
+/*************************************/
+/**** TEXT-FIELD *********************/
+/*************************************/
+.text-field {
+    -fx-padding: 8;
+    -fx-min-height: 44;
+    -fx-pref-height: 44;
+    -fx-max-height: 44;
+    -fx-background-color: #40444b;
+    -fx-background-radius: 8;
+    -fx-text-fill: #dcddde;
+}
+
+/*************************************/
+/**** BUTTON *************************/
+/*************************************/
+.button {
+    -fx-min-width: 0;
+    -fx-min-height: 34;
+    -fx-pref-height: 34;
+    -fx-max-height: 34;
+}
+
+

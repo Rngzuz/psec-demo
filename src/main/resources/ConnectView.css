@@ -1,0 +1,30 @@
+/*************************************/
+/**** LABEL **************************/
+/*************************************/
+.label {
+    -fx-text-fill: #8e9297;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+/*************************************/
+/**** TEXT-FIELD *********************/
+/*************************************/
+.text-field {
+    -fx-padding: 8;
+    -fx-min-height: 44;
+    -fx-pref-height: 44;
+    -fx-max-height: 44;
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-background-radius: 3;
+    -fx-border-color: rgba(0, 0, 0, 0.3);
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-text-fill: #dcddde;
+}
+.text-field:hover {
+    -fx-border-color: #040405;
+}
+.text-field:focused {
+    -fx-border-color: #7289da;
+}
