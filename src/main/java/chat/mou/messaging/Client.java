@@ -1,4 +1,4 @@
-package chat.mou.client;
+package chat.mou.messaging;
 
 import java.io.*;
 import java.net.InetAddress;

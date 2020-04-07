@@ -9,15 +9,15 @@ import java.util.concurrent.Executors;
 public class Server {
 
     public static void main(String[] args) throws Exception {
-        final var executor = Executors.newSingleThreadExecutor();
-        executor.submit(new ChatServer(8080));
+//        final var executor = Executors.newSingleThreadExecutor();
+//        executor.submit(new ChatServer(8080));
     }
 
 //    public static void main(String[] args) throws IOException {
-//        final var server = new ServerSocket();
-//        server.bind(new InetSocketAddress(InetAddress.getLoopbackAddress(), 8080));
+//        final var messaging = new ServerSocket();
+//        messaging.bind(new InetSocketAddress(InetAddress.getLoopbackAddress(), 8080));
 //
-//        final var client = server.accept();
+//        final var client = messaging.accept();
 //
 //        final var input = new DataInputStream(client.getInputStream());
 //        final var output = new DataOutputStream(client.getOutputStream());
@@ -40,6 +40,6 @@ public class Server {
 //        }
 //
 //        client.close();
-//        server.close();
+//        messaging.close();
 //    }
 }
