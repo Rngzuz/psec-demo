@@ -124,9 +124,12 @@ public class ChatHost implements AutoCloseable {
                         // Write output result and wait for future completion
                         final var outputBuffer = ByteBuffer.wrap(result.getBytes());
                         socketChannelSession.getChannel().write(outputBuffer).get();
-                    } catch (Exception exception) {
+                    }
+                    catch (Exception exception) {
                         exception.printStackTrace();
-                    } finally {
+                        addressToSocketChannelMap.remove(key);
+                    }
+                    finally {
                         socketChannelSession.getLock().unlock();
                     }
                 }

@@ -1,32 +1,26 @@
 package chat.mou.messaging;
 
-import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 public class ChatClient implements AutoCloseable, Runnable {
     private final InetSocketAddress hostAddress;
+    private final Consumer<byte[]> consumer;
     private AsynchronousSocketChannel socketChannel;
 
-    private PropertyChangeSupport support;
-
-    public ChatClient(InetSocketAddress hostAddress) {
+    public ChatClient(InetSocketAddress hostAddress, Consumer<byte[]> consumer) {
         this.hostAddress = hostAddress;
-    }
-
-    public void subscribe(Function<String, Void> callback) {
-
+        this.consumer = consumer;
     }
 
     @Override
     public void run() {
         try {
             socketChannel = AsynchronousSocketChannel.open();
-            socketChannel.connect(hostAddress);
+            socketChannel.connect(hostAddress).get();
 
             final var inputBuffer = ByteBuffer.allocate(2048);
 
@@ -46,36 +40,24 @@ public class ChatClient implements AutoCloseable, Runnable {
                 inputBuffer.rewind();
                 inputBuffer.get(temporaryBuffer);
 
+                // Invoke read listener
+                consumer.accept(temporaryBuffer);
+                inputBuffer.clear();
+
                 // Create string from byte array
-                final var result = new String(temporaryBuffer);
+                // final var result = new String(temporaryBuffer);
             }
         }
         catch (Throwable exception) {
+            exception.printStackTrace();
             // Handle error
         }
     }
 
-    private static class WriteCompletionProperties {
-        public final ByteBuffer outputBuffer;
-        public final AsynchronousSocketChannel socketChannel;
-
-        public WriteCompletionProperties(ByteBuffer outputBuffer, AsynchronousSocketChannel socketChannel) {
-            this.outputBuffer = outputBuffer;
-            this.socketChannel = socketChannel;
-        }
+    public synchronized void sendMessage(String message) {
+        final var outputBuffer = ByteBuffer.wrap(message.getBytes());
+        socketChannel.write(outputBuffer);
     }
-
-    private final CompletionHandler<Integer, WriteCompletionProperties> writeCompletionHandler = new CompletionHandler<>() {
-        @Override
-        public void completed(Integer bytesWritten, WriteCompletionProperties properties) {
-
-        }
-
-        @Override
-        public void failed(Throwable exception, WriteCompletionProperties properties) {
-            exception.printStackTrace();
-        }
-    };
 
     @Override
     public void close() throws IOException {
