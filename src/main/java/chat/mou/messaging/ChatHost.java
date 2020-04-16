@@ -3,10 +3,7 @@ package chat.mou.messaging;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.AsynchronousChannelGroup;
-import java.nio.channels.AsynchronousServerSocketChannel;
-import java.nio.channels.AsynchronousSocketChannel;
-import java.nio.channels.CompletionHandler;
+import java.nio.channels.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -15,16 +12,16 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ChatHost implements AutoCloseable {
     // Class used for saving open socket channel connections
     private static class SocketChannelSession {
-        private AsynchronousSocketChannel socketChannel;
+        private AsynchronousSocketChannel channel;
         private final ReentrantLock lock;
 
         public SocketChannelSession(AsynchronousSocketChannel socketChannel) {
-            this.socketChannel = socketChannel;
+            this.channel = socketChannel;
             this.lock = new ReentrantLock();
         }
 
         public AsynchronousSocketChannel getChannel() {
-            return socketChannel;
+            return channel;
         }
 
         public ReentrantLock getLock() {
@@ -33,7 +30,7 @@ public class ChatHost implements AutoCloseable {
     }
 
     private final InetSocketAddress hostAddress;
-    private final Map<String, SocketChannelSession> addressToSocketChannelMap = new ConcurrentHashMap<>();
+    private final Map<String, SocketChannelSession> addressToSessionMap = new ConcurrentHashMap<>();
 
     private AsynchronousChannelGroup channelGroup;
     private AsynchronousServerSocketChannel serverSocketChannel;
@@ -54,18 +51,18 @@ public class ChatHost implements AutoCloseable {
 
     private final CompletionHandler<AsynchronousSocketChannel, Void> acceptCompletionHandler = new CompletionHandler<>() {
         @Override
-        public void completed(AsynchronousSocketChannel socketChannel, Void attachment) {
+        public void completed(AsynchronousSocketChannel channel, Void attachment) {
             serverSocketChannel.accept(null, this);
 
             try {
                 // Save connection by IP address for further use
-                final var address = socketChannel.getRemoteAddress().toString();
-                addressToSocketChannelMap.put(address, new SocketChannelSession(socketChannel));
+                final var address = channel.getRemoteAddress().toString();
+                addressToSessionMap.put(address, new SocketChannelSession(channel));
 
                 System.out.println(address + " connected");
 
                 final var inputBuffer = ByteBuffer.allocate(2048);
-                socketChannel.read(inputBuffer, new ReadCompletionProperties(address, inputBuffer, socketChannel), readCompletionHandler);
+                channel.read(inputBuffer, null, createReadHandler(inputBuffer, channel));
             } catch (IOException exception) {
                 // Failed to get remote address
                 exception.printStackTrace();
@@ -79,74 +76,59 @@ public class ChatHost implements AutoCloseable {
         }
     };
 
-    private static class ReadCompletionProperties {
-        public final String address;
-        public final ByteBuffer inputBuffer;
-        public final AsynchronousSocketChannel socketChannel;
+    private CompletionHandler<Integer, Void> createReadHandler(ByteBuffer inputBuffer, AsynchronousSocketChannel channel) {
+        return new CompletionHandler<>() {
+            @Override
+            public void completed(Integer bytesRead, Void attachment) {
+                if (bytesRead == -1) return;
 
-        public ReadCompletionProperties(String address, ByteBuffer inputBuffer, AsynchronousSocketChannel socketChannel) {
-            this.address = address;
-            this.inputBuffer = inputBuffer;
-            this.socketChannel = socketChannel;
-        }
-    }
+                // Byte array for storing result from the buffer
+                final var result = new byte[bytesRead];
 
-    private final CompletionHandler<Integer, ReadCompletionProperties> readCompletionHandler = new CompletionHandler<>() {
-        @Override
-        public void completed(Integer bytesRead, ReadCompletionProperties properties) {
-            // Disconnect
-            if (bytesRead == -1) {
-                addressToSocketChannelMap.remove(properties.address);
-                return;
-            }
+                // Rewind buffer to read from the beginning
+                inputBuffer.rewind();
+                inputBuffer.get(result);
 
-            // Read incoming data into the input buffer
-            final var temporaryBuffer = new byte[bytesRead];
+                // Print result as String
+                System.out.println(new String(result));
 
-            // Rewind buffer to read from the beginning
-            properties.inputBuffer.rewind();
-            properties.inputBuffer.get(temporaryBuffer);
+                // Loop through all connected clients and send the result to them
+                for (final var key : addressToSessionMap.keySet()) {
+                    final var session = addressToSessionMap.get(key);
 
-            // Create string from byte array
-            final var result = new String(temporaryBuffer);
+                    if (session != null && session.getChannel() != null && session.getChannel().isOpen()) {
+                        // Lock object
+                        session.getLock().lock();
 
-            System.out.println(properties.address + ": " + result);
-
-            for (final var key : addressToSocketChannelMap.keySet()) {
-                // Get current client session
-                final var socketChannelSession = addressToSocketChannelMap.get(key);
-
-                if (socketChannelSession != null && socketChannelSession.getChannel() != null && socketChannelSession.getChannel().isOpen()) {
-                    // Lock object
-                    socketChannelSession.getLock().lock();
-
-                    try {
-                        // Write output result and wait for future completion
-                        final var outputBuffer = ByteBuffer.wrap(result.getBytes());
-                        socketChannelSession.getChannel().write(outputBuffer).get();
-                    }
-                    catch (Exception exception) {
-                        exception.printStackTrace();
-                        addressToSocketChannelMap.remove(key);
-                    }
-                    finally {
-                        socketChannelSession.getLock().unlock();
+                        try {
+                            // Write output result and wait for future completion
+                            final var outputBuffer = ByteBuffer.wrap(result);
+                            session.getChannel().write(outputBuffer).get();
+                        }
+                        catch (Exception exception) {
+                            exception.printStackTrace();
+                            addressToSessionMap.remove(key);
+                        }
+                        finally {
+                            session.getLock().unlock();
+                        }
                     }
                 }
+
+                // Clear inputBuffer and ready it for more messages
+                inputBuffer.clear();
+
+                // Attach same completion handler instance and await next message
+                channel.read(inputBuffer, null, this);
             }
 
-            properties.inputBuffer.clear();
-
-            // Attach read listener to this connection to listen for incoming messages
-            properties.socketChannel.read(properties.inputBuffer, properties, this);
-        }
-
-        @Override
-        public void failed(Throwable exception, ReadCompletionProperties properties) {
-            // Failed reading from client socket channel
-            exception.printStackTrace();
-        }
-    };
+            @Override
+            public void failed(Throwable exception, Void attachment) {
+                // Failed reading from interface socket channel
+                exception.printStackTrace();
+            }
+        };
+    }
 
     @Override
     public void close() throws IOException {

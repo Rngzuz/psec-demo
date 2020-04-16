@@ -14,7 +14,7 @@ public class ChatClientStart {
         final Consumer<byte[]> resultConsumer = (byte[] bytes) -> System.out.println(new String(bytes));
 
         try (final var chatClient = new ChatClient(hostAddress, resultConsumer)) {
-            // Run chat client on separate thread
+            // Run chat interface on separate thread
             final var executor = Executors.newSingleThreadExecutor();
             executor.submit(chatClient);
 

@@ -4,12 +4,16 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
+import java.nio.channels.Channels;
 import java.util.function.Consumer;
 
 public class ChatClient implements AutoCloseable, Runnable {
     private final InetSocketAddress hostAddress;
     private final Consumer<byte[]> consumer;
     private AsynchronousSocketChannel socketChannel;
+
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
 
     public ChatClient(InetSocketAddress hostAddress, Consumer<byte[]> consumer) {
         this.hostAddress = hostAddress;
@@ -22,9 +26,25 @@ public class ChatClient implements AutoCloseable, Runnable {
             socketChannel = AsynchronousSocketChannel.open();
             socketChannel.connect(hostAddress).get();
 
+
+            in = new ObjectInputStream(Channels.newInputStream(socketChannel));
+            out = new ObjectOutputStream(Channels.newOutputStream(socketChannel));
+
+
             final var inputBuffer = ByteBuffer.allocate(2048);
 
             while (socketChannel != null && socketChannel.isOpen()) {
+                ChatMessage result;
+
+                try {
+                    result = (ChatMessage) in.readObject();
+                }
+                catch (ClassCastException exception) {
+                    exception.printStackTrace();
+                    continue;
+                }
+
+
                 // Blocking read to input buffer
                 final var bytesRead = socketChannel.read(inputBuffer).get();
 

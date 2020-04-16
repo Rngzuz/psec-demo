@@ -17,10 +17,10 @@ public class Server {
 //        final var messaging = new ServerSocket();
 //        messaging.bind(new InetSocketAddress(InetAddress.getLoopbackAddress(), 8080));
 //
-//        final var client = messaging.accept();
+//        final var interface = messaging.accept();
 //
-//        final var input = new DataInputStream(client.getInputStream());
-//        final var output = new DataOutputStream(client.getOutputStream());
+//        final var input = new DataInputStream(interface.getInputStream());
+//        final var output = new DataOutputStream(interface.getOutputStream());
 //
 //        // Input message from user
 //        final var reader = new BufferedReader(new InputStreamReader(System.in));
@@ -31,15 +31,15 @@ public class Server {
 //            final var inputMessage = input.readUTF();
 //            System.out.println(inputMessage);
 //
-//            client.getOutputStream().write(client.getInputStream().readAllBytes());
-//            client.getOutputStream().flush();
+//            interface.getOutputStream().write(interface.getInputStream().readAllBytes());
+//            interface.getOutputStream().flush();
 //
 //            if (inputMessage.equals("-S")) {
 //                break;
 //            }
 //        }
 //
-//        client.close();
+//        interface.close();
 //        messaging.close();
 //    }
 }
