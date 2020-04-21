@@ -1,4 +1,4 @@
-package chat.mou.client;
+package chat.mou.ui;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,16 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 
 @Component
 @Scope("singleton")
-public class ConnectView extends VBox {
+public class ChannelView extends VBox
+{
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public ConnectView(ApplicationEventPublisher eventPublisher) {
-        final var loader = new FXMLLoader(getClass().getResource("/ConnectView.fxml"));
+    public ChannelView(ApplicationEventPublisher eventPublisher)
+    {
+        final var loader = new FXMLLoader(getClass().getResource("/ChannelView.fxml"));
         loader.setController(this);
         loader.setRoot(this);
 
@@ -31,10 +34,16 @@ public class ConnectView extends VBox {
     }
 
     @FXML
-    public void handleConnect() {
-        eventPublisher.publishEvent(new ViewEvent(
-            ConnectView.class.getSimpleName(),
-            ChannelView.class.getSimpleName()
+    public void handleDisconnect()
+    {
+        eventPublisher.publishEvent(new ViewEvent(ChannelView.class.getSimpleName(),
+            ConnectView.class.getSimpleName()
         ));
+    }
+
+    @FXML
+    public void handleSend()
+    {
+
     }
 }

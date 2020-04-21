@@ -6,35 +6,42 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Class used for saving open socket channel connections.
  */
-public class ClientSession {
+public class Session
+{
     private final String address;
     private String displayName;
     private final AsynchronousSocketChannel socketChannel;
     private final ReentrantLock lock;
 
-    public ClientSession(String address, AsynchronousSocketChannel socketChannel) {
+    public Session(String address, AsynchronousSocketChannel socketChannel)
+    {
         this.address = address;
         this.socketChannel = socketChannel;
         this.lock = new ReentrantLock();
     }
 
-    public String getAddress() {
+    public String getAddress()
+    {
         return address;
     }
 
-    public String getDisplayName() {
+    public String getDisplayName()
+    {
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
+    public void setDisplayName(String displayName)
+    {
         this.displayName = displayName;
     }
 
-    public AsynchronousSocketChannel getChannel() {
+    public AsynchronousSocketChannel getChannel()
+    {
         return socketChannel;
     }
 
-    public ReentrantLock getLock() {
+    public ReentrantLock getLock()
+    {
         return lock;
     }
 }

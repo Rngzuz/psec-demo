@@ -1,4 +1,4 @@
-package chat.mou.client;
+package chat.mou.ui;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -7,16 +7,19 @@ import javafx.stage.Stage;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-public class Start extends Application {
+public class Start extends Application
+{
     private ConfigurableApplicationContext context;
 
     @Override
-    public void init() {
+    public void init()
+    {
         context = new SpringApplicationBuilder(Main.class).run();
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage)
+    {
         stage.setTitle("Mou Client");
 
         final var scene = new Scene(context.getBean(ConnectView.class), 840, 680);
@@ -40,7 +43,8 @@ public class Start extends Application {
     }
 
     @Override
-    public void stop() {
+    public void stop()
+    {
         context.close();
         Platform.exit();
     }
