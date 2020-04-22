@@ -3,17 +3,17 @@ package chat.mou.shared;
 import java.io.*;
 
 public final class Message implements Serializable {
-    private final Action action;
+    private final EventType eventType;
     private final String body;
 
-    public Message(Action action, String body) {
-        this.action = action;
+    public Message(EventType eventType, String body) {
+        this.eventType = eventType;
         this.body = body;
     }
 
-    public Action getAction()
+    public EventType getEventType()
     {
-        return action;
+        return eventType;
     }
 
     public String getBody()
@@ -42,6 +42,6 @@ public final class Message implements Serializable {
             exception.printStackTrace();
         }
 
-        return new Message(Action.ERROR, "");
+        return new Message(EventType.ERROR, null);
     }
 }

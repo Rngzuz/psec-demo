@@ -6,7 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Class used for saving open socket channel connections.
  */
-public class Session
+public final class Session
 {
     private final String address;
     private String displayName;

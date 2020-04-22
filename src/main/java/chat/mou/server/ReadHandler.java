@@ -1,26 +1,33 @@
 package chat.mou.server;
 
+import chat.mou.shared.EventBus;
+import chat.mou.shared.EventType;
 import chat.mou.shared.Message;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.Map;
 
-public class ReadHandler implements CompletionHandler<Integer, Void>
+public final class ReadHandler implements CompletionHandler<Integer, Void>
 {
-    private final ServerController serverController;
+    private final EventBus eventBus;
+    private final Map<String, Session> sessionMap;
     private final AsynchronousSocketChannel clientChannel;
     private final Session clientSession;
     private final ByteBuffer inputBuffer;
 
     public ReadHandler(
-        ServerController serverController,
+        EventBus eventBus,
+        Map<String, Session> sessionMap,
         AsynchronousSocketChannel clientChannel,
         Session clientSession,
         ByteBuffer inputBuffer
     )
     {
-        this.serverController = serverController;
+        this.eventBus = eventBus;
+        this.sessionMap = sessionMap;
         this.clientChannel = clientChannel;
         this.clientSession = clientSession;
         this.inputBuffer = inputBuffer;
@@ -31,7 +38,7 @@ public class ReadHandler implements CompletionHandler<Integer, Void>
     {
         // Disconnect client on end-of-stream
         if (bytesRead == -1) {
-            serverController.removeSession(clientSession);
+            sessionMap.remove(clientSession.getAddress());
             return;
         }
 
@@ -42,27 +49,26 @@ public class ReadHandler implements CompletionHandler<Integer, Void>
         inputBuffer.rewind();
         inputBuffer.get(rawMessage);
 
-        // Deserialize message to a message object
         final var message = Message.deserialize(rawMessage);
 
-        // Print message body
-        System.out.println(message.getBody());
+        // Deserialize message to a message and dispatch
+        eventBus.dispatch(message);
+        inputBuffer.clear();
 
-        // Switch on message action
-        switch (message.getAction()) {
-            case CONNECT:
-                clientSession.setDisplayName(message.getBody());
-                break;
-            case DISCONNECT:
-                serverController.removeSession(clientSession);
-                return;
-            case BROADCAST:
-                serverController.broadcastMessage(message);
-                break;
+        if (message.getEventType() == EventType.DISCONNECT || message.getEventType() == EventType.ERROR) {
+
+            try {
+                clientSession.getChannel().close();
+                sessionMap.remove(clientSession.getAddress());
+            }
+            catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+            return;
         }
 
         // Attach same completion handler instance and await next message
-        inputBuffer.clear();
         clientChannel.read(inputBuffer, null, this);
     }
 

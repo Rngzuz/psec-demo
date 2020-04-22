@@ -1,19 +1,28 @@
 package chat.mou.server;
 
+import chat.mou.shared.EventBus;
+import chat.mou.shared.EventType;
+import chat.mou.shared.Message;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousServerSocketChannel;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
+import java.util.Map;
 
-public class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, Void>
+public final class AcceptHandler implements CompletionHandler<AsynchronousSocketChannel, Void>
 {
-    private final ServerController serverController;
+    private final EventBus eventBus;
+    private final Map<String, Session> sessionMap;
     private final AsynchronousServerSocketChannel serverChannel;
 
-    public AcceptHandler(ServerController serverController, AsynchronousServerSocketChannel serverChannel)
+    public AcceptHandler(
+        EventBus eventBus, Map<String, Session> sessionMap, AsynchronousServerSocketChannel serverChannel
+    )
     {
-        this.serverController = serverController;
+        this.eventBus = eventBus;
+        this.sessionMap = sessionMap;
         this.serverChannel = serverChannel;
     }
 
@@ -27,15 +36,12 @@ public class AcceptHandler implements CompletionHandler<AsynchronousSocketChanne
             // Get client IP address and create client session
             final var clientAddress = clientChannel.getLocalAddress().toString();
             final var clientSession = new Session(clientAddress, clientChannel);
-            serverController.putSession(clientSession);
-
-            System.out.println(clientAddress + " connected");
+            sessionMap.put(clientAddress, clientSession);
 
             final var inputBuffer = ByteBuffer.allocate(2048);
-            clientChannel.read(
-                inputBuffer,
+            clientChannel.read(inputBuffer,
                 null,
-                new ReadHandler(serverController, clientChannel, clientSession, inputBuffer)
+                new ReadHandler(eventBus, sessionMap, clientChannel, clientSession, inputBuffer)
             );
         }
         catch (IOException exception) {

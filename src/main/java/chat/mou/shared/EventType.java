@@ -1,8 +1,9 @@
 package chat.mou.shared;
 
-public enum Action {
-    BROADCAST,
-    CONNECT,
+public enum EventType
+{
     DISCONNECT,
+    WRITE,
+    BROADCAST,
     ERROR
 }
