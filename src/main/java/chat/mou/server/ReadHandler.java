@@ -55,19 +55,6 @@ public final class ReadHandler implements CompletionHandler<Integer, Void>
         eventBus.dispatch(message);
         inputBuffer.clear();
 
-        if (message.getEventType() == EventType.DISCONNECT || message.getEventType() == EventType.ERROR) {
-
-            try {
-                clientSession.getChannel().close();
-                sessionMap.remove(clientSession.getAddress());
-            }
-            catch (IOException exception) {
-                exception.printStackTrace();
-            }
-
-            return;
-        }
-
         // Attach same completion handler instance and await next message
         clientChannel.read(inputBuffer, null, this);
     }

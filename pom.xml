@@ -47,6 +47,11 @@
 			<artifactId>javafx-fxml</artifactId>
 			<version>13.0.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpg-jdk15on</artifactId>
+			<version>1.64</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

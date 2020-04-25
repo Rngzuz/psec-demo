@@ -1,8 +1,6 @@
 package chat.mou.server;
 
 import chat.mou.shared.EventBus;
-import chat.mou.shared.EventType;
-import chat.mou.shared.Message;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -34,7 +32,7 @@ public final class AcceptHandler implements CompletionHandler<AsynchronousSocket
 
         try {
             // Get client IP address and create client session
-            final var clientAddress = clientChannel.getLocalAddress().toString();
+            final var clientAddress = clientChannel.getRemoteAddress().toString();
             final var clientSession = new Session(clientAddress, clientChannel);
             sessionMap.put(clientAddress, clientSession);
 

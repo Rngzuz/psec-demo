@@ -35,6 +35,7 @@ public final class Server implements Runnable, AutoCloseable
                 // Loop through sessions and send the message
                 for (final var address : sessionMap.keySet()) {
                     final var session = sessionMap.get(address);
+                    System.out.println(address + ": " + message.getBody());
 
                     if (session.getChannel() != null && session.getChannel().isOpen()) {
                         session.getLock().lock();
