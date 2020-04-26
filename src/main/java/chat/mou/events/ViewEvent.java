@@ -7,7 +7,7 @@ public class ViewEvent extends ApplicationEvent
 {
     private final Class<? extends Parent> view;
 
-    public ViewEvent(Parent source, Class<? extends Parent> view)
+    public ViewEvent(Object source, Class<? extends Parent> view)
     {
         super(source);
         this.view = view;

@@ -23,27 +23,17 @@
                   <Insets bottom="32.0" />
               </VBox.margin>
           </SVGPath>
-          <Label text="DISPLAY NAME">
-              <VBox.margin>
-                  <Insets bottom="8.0" />
-              </VBox.margin>
-          </Label>
-          <TextField>
-              <VBox.margin>
-                  <Insets bottom="16.0" />
-              </VBox.margin>
-          </TextField>
           <Label text="PORT">
               <VBox.margin>
                   <Insets bottom="8.0" />
               </VBox.margin>
           </Label>
-          <TextField>
+          <TextField fx:id="port" text="8080">
               <VBox.margin>
                   <Insets bottom="16.0" />
               </VBox.margin>
           </TextField>
-          <Button mnemonicParsing="false" onMouseClicked="#dispatchViewEvent" text="Host" />
+          <Button mnemonicParsing="false" onMouseClicked="#handleSubmit" text="Host" />
       </children>
    </VBox>
 </fx:root>

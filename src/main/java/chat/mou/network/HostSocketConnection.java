@@ -1,8 +1,11 @@
 package chat.mou.network;
 
+import chat.mou.Message;
 import chat.mou.events.AcceptEvent;
+import chat.mou.events.ErrorEvent;
 import chat.mou.events.MessageEvent;
 import chat.mou.events.ReadEvent;
+import chat.mou.security.KeyStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -23,25 +26,37 @@ import java.nio.channels.CompletionHandler;
 public class HostSocketConnection implements RunnableSocketConnection
 {
     private final ApplicationEventMulticaster eventMulticaster;
+    private final KeyStore keyStore;
 
     private InetSocketAddress hostAddress;
     private AsynchronousServerSocketChannel serverChannel;
     private AsynchronousSocketChannel clientChannel;
 
     @Autowired
-    public HostSocketConnection(ConfigurableApplicationContext applicationContext)
+    public HostSocketConnection(ConfigurableApplicationContext applicationContext, KeyStore keyStore)
     {
         eventMulticaster =
             applicationContext.getBean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
             ApplicationEventMulticaster.class
         );
+
+        this.keyStore = keyStore;
     }
 
-    private final ApplicationListener<MessageEvent> messageEventListener = messageEvent -> {
+    private ApplicationListener<MessageEvent> onMessageEvent = this::_onMessageEvent;
+
+    public void _onMessageEvent(MessageEvent event)
+    {
         if (clientChannel != null && clientChannel.isOpen()) {
-            clientChannel.write(ByteBuffer.wrap(messageEvent.getBody().getBytes()));
+            try {
+                final var message = new Message(Message.Type.TEXT, keyStore.encryptMessage(event.getBody()));
+                clientChannel.write(ByteBuffer.wrap(Message.serialize(message)));
+            }
+            catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
-    };
+    }
 
     private final CompletionHandler<AsynchronousSocketChannel, Void> acceptHandler = new CompletionHandler<>()
     {
@@ -51,7 +66,7 @@ public class HostSocketConnection implements RunnableSocketConnection
             clientChannel = channel;
 
             eventMulticaster.multicastEvent(new AcceptEvent(this));
-            eventMulticaster.addApplicationListener(messageEventListener);
+            eventMulticaster.addApplicationListener(onMessageEvent);
 
             final var inputBuffer = ByteBuffer.allocate(2048);
             clientChannel.read(inputBuffer, inputBuffer, readHandler);
@@ -60,6 +75,7 @@ public class HostSocketConnection implements RunnableSocketConnection
         @Override
         public void failed(Throwable exception, Void attachment)
         {
+            eventMulticaster.multicastEvent(new ErrorEvent(this, ErrorEvent.Type.ACCEPT_ERROR));
             exception.printStackTrace();
         }
     };
@@ -77,15 +93,32 @@ public class HostSocketConnection implements RunnableSocketConnection
             inputBuffer.rewind();
             inputBuffer.get(bytes);
 
-            eventMulticaster.multicastEvent(new ReadEvent(this, bytes));
+            try {
+                final var message = Message.deserialize(bytes);
+
+                if (message.getType().equals(Message.Type.KEY)) {
+                    keyStore.setAndDecodeExternalPublicKey(message.getData());
+
+                    final var ownPublicKeyMessage = new Message(Message.Type.KEY, keyStore.getEncodedOwnPublicKey());
+                    clientChannel.write(ByteBuffer.wrap(Message.serialize(ownPublicKeyMessage)));
+                }
+                else if (message.getType().equals(Message.Type.TEXT)) {
+                    final var data = keyStore.decryptMessage(message.getData());
+                    eventMulticaster.multicastEvent(new ReadEvent(this, data));
+                }
+            }
+            catch (Exception exception) {
+                exception.printStackTrace();
+            }
 
             inputBuffer.clear();
-            clientChannel.read(inputBuffer, null, this);
+            clientChannel.read(inputBuffer, inputBuffer, this);
         }
 
         @Override
         public void failed(Throwable exception, ByteBuffer attachment)
         {
+            eventMulticaster.multicastEvent(new ErrorEvent(this, ErrorEvent.Type.READ_ERROR));
             exception.printStackTrace();
         }
     };
@@ -107,7 +140,11 @@ public class HostSocketConnection implements RunnableSocketConnection
     @Override
     public void close() throws IOException
     {
-        eventMulticaster.removeApplicationListener(messageEventListener);
+        eventMulticaster.removeApplicationListener(onMessageEvent);
+
+        if (clientChannel != null && clientChannel.isOpen()) {
+            clientChannel.close();
+        }
 
         if (serverChannel != null && serverChannel.isOpen()) {
             serverChannel.close();

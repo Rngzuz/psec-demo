@@ -75,6 +75,7 @@
 }
 .button:disabled {
     -fx-cursor: default;
+    -fx-opacity: 0.5;
 }
 .button.button-small {
     -fx-font-size: 14;

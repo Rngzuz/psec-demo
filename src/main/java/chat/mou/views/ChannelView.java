@@ -1,9 +1,9 @@
 package chat.mou.views;
 
-import chat.mou.events.ConnectEvent;
-import chat.mou.events.ReadEvent;
-import chat.mou.events.ViewEvent;
-import chat.mou.events.WriteEvent;
+import chat.mou.events.*;
+import chat.mou.network.ClientSocketConnection;
+import chat.mou.network.SocketConnectionManager;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -23,13 +23,17 @@ import java.io.IOException;
 @Scope("singleton")
 public class ChannelView extends VBox
 {
-    private ApplicationEventPublisher eventPublisher;
+    private final ApplicationEventPublisher eventPublisher;
+    private final SocketConnectionManager connectionManager;
 
     @FXML
     private VBox vBox;
 
     @Autowired
-    public ChannelView(ApplicationEventPublisher eventPublisher)
+    public ChannelView(
+        ApplicationEventPublisher eventPublisher,
+        SocketConnectionManager connectionManager
+    )
     {
         final var loader = new FXMLLoader(getClass().getResource("/ChannelView.fxml"));
         loader.setController(this);
@@ -44,11 +48,18 @@ public class ChannelView extends VBox
         }
 
         this.eventPublisher = eventPublisher;
+        this.connectionManager = connectionManager;
+    }
+
+    private void addMessage(String message)
+    {
+        vBox.getChildren().add(new Label(message));
     }
 
     @FXML
     public void dispatchCloseEvent()
     {
+        connectionManager.closeSocketConnection();
         eventPublisher.publishEvent(new ViewEvent(this, ConnectView.class));
     }
 
@@ -59,29 +70,25 @@ public class ChannelView extends VBox
             final var textField = (TextField) event.getTarget();
 
             if (!textField.getText().isEmpty()) {
-                vBox.getChildren().add(new Label(textField.getText()));
+                addMessage(textField.getText());
+                eventPublisher.publishEvent(new MessageEvent(this, textField.getText()));
                 textField.clear();
             }
         }
-
-        // eventPublisher.publishEvent(new MessageEvent(this, body));
-    }
-
-    @EventListener
-    public void onConnectEvent(ConnectEvent event)
-    {
-
     }
 
     @EventListener
     public void onReadEvent(ReadEvent event)
     {
-
+        Platform.runLater(() -> {
+            addMessage(new String(event.getBody()));
+        });
     }
 
     @EventListener
-    public void onWriteEvent(WriteEvent event)
-    {
-
+    public void onErrorEvent(ErrorEvent event) {
+        if (event.getType().equals(ErrorEvent.Type.READ_ERROR)) {
+            dispatchCloseEvent();
+        }
     }
 }

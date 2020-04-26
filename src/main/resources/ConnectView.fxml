@@ -23,37 +23,17 @@
                   <Insets bottom="32.0" />
               </VBox.margin>
           </SVGPath>
-          <Label text="DISPLAY NAME">
-              <VBox.margin>
-                  <Insets bottom="8.0" />
-              </VBox.margin>
-          </Label>
-          <TextField>
-              <VBox.margin>
-                  <Insets bottom="16.0" />
-              </VBox.margin>
-          </TextField>
           <Label text="IP ADDRESS">
               <VBox.margin>
                   <Insets bottom="8.0" />
               </VBox.margin>
           </Label>
-          <TextField>
+          <TextField fx:id="ipAddress" text="127.0.0.1:8080">
               <VBox.margin>
                   <Insets bottom="16.0" />
               </VBox.margin>
           </TextField>
-          <Label text="PASSWORD">
-              <VBox.margin>
-                  <Insets bottom="8.0" />
-              </VBox.margin>
-          </Label>
-          <TextField>
-              <VBox.margin>
-                  <Insets bottom="16.0" />
-              </VBox.margin>
-          </TextField>
-          <Button mnemonicParsing="false" onMouseClicked="#dispatchViewEvent" text="Connect" />
+          <Button mnemonicParsing="false" onMouseClicked="#handleSubmit" text="Connect" />
       </children>
    </VBox>
 </fx:root>

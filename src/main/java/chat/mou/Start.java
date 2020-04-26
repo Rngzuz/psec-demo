@@ -1,13 +1,19 @@
 package chat.mou;
 
+import chat.mou.events.ConnectEvent;
 import chat.mou.events.ViewEvent;
+import chat.mou.network.SocketConnectionManager;
 import chat.mou.views.ConnectView;
+import chat.mou.views.HostView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import java.util.concurrent.CompletableFuture;
 
 public class Start extends Application
 {
@@ -32,6 +38,15 @@ public class Start extends Application
             }
         });
 
+        rootScene.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ALT)) {
+                applicationContext.publishEvent(new ViewEvent(this, HostView.class));
+            }
+            else if (event.getCode().equals(KeyCode.CONTROL)) {
+                applicationContext.publishEvent(new ViewEvent(this, ConnectView.class));
+            }
+        });
+
         stage.setScene(rootScene);
         stage.show();
     }
@@ -39,8 +54,13 @@ public class Start extends Application
     @Override
     public void stop()
     {
-        applicationContext.close();
-        Platform.exit();
+        CompletableFuture.runAsync(() -> {
+            final var connectionManager = applicationContext.getBean(SocketConnectionManager.class);
+            connectionManager.closeSocketConnection();
+        }).thenRun(() -> {
+            applicationContext.close();
+            Platform.exit();
+        });
     }
 
     private void onViewEvent(ViewEvent event)
