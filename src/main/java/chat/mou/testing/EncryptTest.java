@@ -1,9 +1,9 @@
-package chat.mou.testing;
-
-import java.util.Base64;
-
-public class EncryptTest
-{
+//package chat.mou.testing;
+//
+//import java.util.Base64;
+//
+//public class EncryptTest
+//{
 //    public static void main(String[] args) throws Exception
 //    {
 //        final var enc = new Encrypt();
@@ -20,7 +20,7 @@ public class EncryptTest
 //        System.out.println("Decrypted:\t" + new String(decryptedBytes));
 //        System.out.println(enc.getPublicKey());
 //    }
-
+//
 //    public static void main(String[] args) throws Exception
 //    {
 //        final var provider = new BouncyCastleProvider();
@@ -55,4 +55,4 @@ public class EncryptTest
 //        System.out.println("Decrypted:\t" + new String(plainText));
 //        System.out.print(privKey + "\n");
 //    }
-}
+//}
