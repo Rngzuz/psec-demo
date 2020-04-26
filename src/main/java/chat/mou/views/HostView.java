@@ -1,7 +1,9 @@
-package chat.mou.ui;
+package chat.mou.views;
 
+import chat.mou.events.ViewEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -12,14 +14,14 @@ import java.io.IOException;
 
 @Component
 @Scope("singleton")
-public class ChannelView extends VBox
+public class HostView extends VBox
 {
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    public ChannelView(ApplicationEventPublisher eventPublisher)
+    public HostView(ApplicationEventPublisher eventPublisher)
     {
-        final var loader = new FXMLLoader(getClass().getResource("/ChannelView.fxml"));
+        final var loader = new FXMLLoader(getClass().getResource("/HostView.fxml"));
         loader.setController(this);
         loader.setRoot(this);
 
@@ -27,6 +29,7 @@ public class ChannelView extends VBox
             loader.load();
         }
         catch (IOException exception) {
+            // TODO: Handle HostView.fxml loading error better
             throw new RuntimeException(exception);
         }
 
@@ -34,16 +37,8 @@ public class ChannelView extends VBox
     }
 
     @FXML
-    public void handleDisconnect()
+    public void dispatchViewEvent(MouseEvent event)
     {
-        eventPublisher.publishEvent(new ViewEvent(ChannelView.class.getSimpleName(),
-            ConnectView.class.getSimpleName()
-        ));
-    }
-
-    @FXML
-    public void handleSend()
-    {
-
+        eventPublisher.publishEvent(new ViewEvent(this, ChannelView.class));
     }
 }

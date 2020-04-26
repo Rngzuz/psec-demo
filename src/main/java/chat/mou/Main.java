@@ -1,4 +1,4 @@
-package chat.mou.ui;
+package chat.mou;
 
 import javafx.application.Application;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

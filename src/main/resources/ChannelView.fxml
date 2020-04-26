@@ -17,7 +17,7 @@
     </stylesheets>
    <BorderPane styleClass="border-pane" VBox.vgrow="NEVER">
       <right>
-         <Button mnemonicParsing="false" onMouseClicked="#handleDisconnect" text="Disconnect" BorderPane.alignment="CENTER" />
+         <Button mnemonicParsing="false" onMouseClicked="#dispatchCloseEvent" text="Disconnect" BorderPane.alignment="CENTER" />
       </right>
       <left>
          <Label text="#channel-name" BorderPane.alignment="CENTER_LEFT">
@@ -36,7 +36,7 @@
         </VBox.margin>
         <VBox fx:id="vBox" />
     </ScrollPane>
-    <TextField onKeyPressed="#handleSend" VBox.vgrow="NEVER">
+    <TextField onKeyPressed="#dispatchMessageEvent" VBox.vgrow="NEVER">
       <VBox.margin>
          <Insets bottom="16.0" left="16.0" right="16.0" />
       </VBox.margin></TextField>

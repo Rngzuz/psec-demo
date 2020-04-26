@@ -1,35 +1,25 @@
 package chat.mou.testing;
 
-import chat.mou.security.Encrypt;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import javax.crypto.Cipher;
-import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.RSAPrivateKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 
 public class EncryptTest
 {
-    public static void main(String[] args) throws Exception
-    {
-        final var enc = new Encrypt();
-
-        final var data = "Hello World!";
-        System.out.println("Original:\t" + data);
-        System.out.print("\n");
-
-        final var encryptedBytes = enc.encrypt(data.getBytes());
-        System.out.println("Encrypted:\t" + new String(Base64.getEncoder().encode(encryptedBytes)));
-        System.out.println(enc.getPrivateKey()); System.out.print("\n");
-
-        final var decryptedBytes = enc.decrypt(encryptedBytes);
-        System.out.println("Decrypted:\t" + new String(decryptedBytes));
-        System.out.println(enc.getPublicKey());
-    }
+//    public static void main(String[] args) throws Exception
+//    {
+//        final var enc = new Encrypt();
+//
+//        final var data = "Hello World!";
+//        System.out.println("Original:\t" + data);
+//        System.out.print("\n");
+//
+//        final var encryptedBytes = enc.encrypt(data.getBytes());
+//        System.out.println("Encrypted:\t" + new String(Base64.getEncoder().encode(encryptedBytes)));
+//        System.out.println(enc.getPrivateKey()); System.out.print("\n");
+//
+//        final var decryptedBytes = enc.decrypt(encryptedBytes);
+//        System.out.println("Decrypted:\t" + new String(decryptedBytes));
+//        System.out.println(enc.getPublicKey());
+//    }
 
 //    public static void main(String[] args) throws Exception
 //    {

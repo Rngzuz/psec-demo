@@ -33,7 +33,7 @@
                   <Insets bottom="16.0" />
               </VBox.margin>
           </TextField>
-          <Label text="IP ADDRESS">
+          <Label text="PORT">
               <VBox.margin>
                   <Insets bottom="8.0" />
               </VBox.margin>
@@ -43,17 +43,7 @@
                   <Insets bottom="16.0" />
               </VBox.margin>
           </TextField>
-          <Label text="PASSWORD">
-              <VBox.margin>
-                  <Insets bottom="8.0" />
-              </VBox.margin>
-          </Label>
-          <TextField>
-              <VBox.margin>
-                  <Insets bottom="16.0" />
-              </VBox.margin>
-          </TextField>
-          <Button mnemonicParsing="false" onMouseClicked="#dispatchViewEvent" text="Connect" />
+          <Button mnemonicParsing="false" onMouseClicked="#dispatchViewEvent" text="Host" />
       </children>
    </VBox>
 </fx:root>
