@@ -1,7 +1,6 @@
 package chat.mou.testing;
 
 import chat.mou.security.KeyStore;
-import org.bouncycastle.util.encoders.Base64;
 
 public class KeyStoreTest
 {
