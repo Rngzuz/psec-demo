@@ -2,20 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="35a1261d-36fd-4a79-aaf3-dc83e327cd6a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/ClientView.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/chat/mou/Start.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chat/mou/Start.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/chat/mou/network/ClientSocketConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chat/mou/network/ClientSocketConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/chat/mou/network/HostSocketConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chat/mou/network/HostSocketConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/chat/mou/network/RunnableSocketConnection.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/chat/mou/network/SocketConnectionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chat/mou/network/ConnectionManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/chat/mou/views/ChannelView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chat/mou/views/ChannelView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/chat/mou/views/ConnectView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chat/mou/views/ClientView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/chat/mou/views/HostView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/chat/mou/views/HostView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/ChannelView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/ChannelView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/ConnectView.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/ClientView.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/ConnectView.fxml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/HostView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/HostView.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,7 +146,7 @@
       <workItem from="1587799538183" duration="41465000" />
       <workItem from="1587903663108" duration="25817000" />
       <workItem from="1587990764087" duration="1671000" />
-      <workItem from="1587992450500" duration="5189000" />
+      <workItem from="1587992450500" duration="5732000" />
     </task>
     <servers />
   </component>
