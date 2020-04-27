@@ -2,6 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="35a1261d-36fd-4a79-aaf3-dc83e327cd6a" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/KeyStoreTest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/KeyStoreTest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/Main__1_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/Main__2_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/Program.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Program.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,23 +63,34 @@
       <recent name="C:\Projects\src\main\resources" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.KeyStoreTest">
+  <component name="RunManager" selected="Application.KeyStore Encrypt/Decrypt Test">
+    <configuration name="Main (1)" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="chat.mou.Main" />
+      <module name="Projects" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main (2)" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="chat.mou.Main" />
+      <module name="Projects" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="CompoundRunConfigurationType">
       <toRun name="Host" type="SpringBootApplicationConfigurationType" />
       <toRun name="Client" type="SpringBootApplicationConfigurationType" />
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Application.KeyStoreTest" />
+      <item itemvalue="Application.Main (1)" />
+      <item itemvalue="Application.Main (2)" />
+      <item itemvalue="Application.KeyStore Encrypt/Decrypt Test" />
       <item itemvalue="Compound.Program" />
-      <item itemvalue="Spring Boot.Main (1)" />
-      <item itemvalue="Spring Boot.Main (2)" />
     </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.KeyStoreTest" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -104,7 +119,8 @@
       <workItem from="1587903663108" duration="25817000" />
       <workItem from="1587990764087" duration="1671000" />
       <workItem from="1587992450500" duration="9157000" />
-      <workItem from="1588002322124" duration="35000" />
+      <workItem from="1588002322124" duration="106000" />
+      <workItem from="1588002749195" duration="265000" />
     </task>
     <servers />
   </component>
@@ -129,10 +145,10 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="772" y="275" key="#Inspections/0.0.2560.1400@0.0.2560.1400" timestamp="1584367872418" />
-    <state x="928" y="543" width="1092" height="803" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1588002356353">
+    <state x="928" y="543" width="1092" height="803" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1588003013716">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state x="928" y="543" width="1092" height="803" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1400@0.0.2560.1400" timestamp="1588002356353" />
+    <state x="928" y="543" width="1092" height="803" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1400@0.0.2560.1400" timestamp="1588003013716" />
     <state x="1041" y="342" key="#com.intellij.ide.util.MemberChooser" timestamp="1587994361561">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
@@ -153,26 +169,30 @@
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="980" y="510" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.2560.1400@0.0.2560.1400" timestamp="1586248708744" />
+    <state x="1147" y="652" key="EnvironmentVariablesDialog" timestamp="1588002901506">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="1147" y="652" key="EnvironmentVariablesDialog/0.0.2560.1400@0.0.2560.1400" timestamp="1588002901506" />
     <state x="1010" y="398" key="FileChooserDialogImpl" timestamp="1587999878775">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
     <state x="1010" y="398" key="FileChooserDialogImpl/0.0.2560.1400@0.0.2560.1400" timestamp="1587999878775" />
-    <state width="2505" height="484" key="GridCell.Tab.0.bottom" timestamp="1588002090161">
+    <state width="2505" height="484" key="GridCell.Tab.0.bottom" timestamp="1588002949467">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2505" height="484" key="GridCell.Tab.0.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1588002090161" />
-    <state width="2505" height="484" key="GridCell.Tab.0.center" timestamp="1588002090161">
+    <state width="2505" height="484" key="GridCell.Tab.0.bottom/0.0.2560.1400@0.0.2560.1400" timestamp="1588002949467" />
+    <state width="2505" height="484" key="GridCell.Tab.0.center" timestamp="1588002949466">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2505" height="484" key="GridCell.Tab.0.center/0.0.2560.1400@0.0.2560.1400" timestamp="1588002090161" />
-    <state width="2505" height="484" key="GridCell.Tab.0.left" timestamp="1588002090161">
+    <state width="2505" height="484" key="GridCell.Tab.0.center/0.0.2560.1400@0.0.2560.1400" timestamp="1588002949466" />
+    <state width="2505" height="484" key="GridCell.Tab.0.left" timestamp="1588002949466">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2505" height="484" key="GridCell.Tab.0.left/0.0.2560.1400@0.0.2560.1400" timestamp="1588002090161" />
-    <state width="2505" height="484" key="GridCell.Tab.0.right" timestamp="1588002090161">
+    <state width="2505" height="484" key="GridCell.Tab.0.left/0.0.2560.1400@0.0.2560.1400" timestamp="1588002949466" />
+    <state width="2505" height="484" key="GridCell.Tab.0.right" timestamp="1588002949467">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
-    <state width="2505" height="484" key="GridCell.Tab.0.right/0.0.2560.1400@0.0.2560.1400" timestamp="1588002090161" />
+    <state width="2505" height="484" key="GridCell.Tab.0.right/0.0.2560.1400@0.0.2560.1400" timestamp="1588002949467" />
     <state width="2505" height="484" key="GridCell.Tab.1.bottom" timestamp="1588002090161">
       <screen x="0" y="0" width="2560" height="1400" />
     </state>
