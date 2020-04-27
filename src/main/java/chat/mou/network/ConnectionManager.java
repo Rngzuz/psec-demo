@@ -9,17 +9,17 @@ import java.util.concurrent.Executors;
 
 @Component
 @Scope("singleton")
-public class SocketConnectionManager
+public class ConnectionManager
 {
-    private RunnableSocketConnection socketConnection;
+    private SocketConnection socketConnection;
     private ExecutorService executor;
 
-    public RunnableSocketConnection getSocketConnection()
+    public SocketConnection getSocketConnection()
     {
         return socketConnection;
     }
 
-    public void setSocketConnection(RunnableSocketConnection socketConnection)
+    public void setSocketConnection(SocketConnection socketConnection)
     {
         this.socketConnection = socketConnection;
     }
@@ -53,5 +53,15 @@ public class SocketConnectionManager
         }
 
         return socketConnection.isOpen();
+    }
+
+    public boolean isOpen()
+    {
+        return socketConnection != null && socketConnection.isOpen();
+    }
+
+    public boolean isHost()
+    {
+        return socketConnection != null && socketConnection.isHost();
     }
 }

@@ -20,7 +20,7 @@
          <Button mnemonicParsing="false" onMouseClicked="#dispatchCloseEvent" text="Disconnect" BorderPane.alignment="CENTER" />
       </right>
       <left>
-         <Label text="#channel-name" BorderPane.alignment="CENTER_LEFT">
+         <Label fx:id="title" BorderPane.alignment="CENTER_LEFT">
             <font>
                <Font size="18.0" />
             </font>

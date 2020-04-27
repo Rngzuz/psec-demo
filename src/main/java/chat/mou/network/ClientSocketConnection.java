@@ -3,58 +3,26 @@ package chat.mou.network;
 import chat.mou.Message;
 import chat.mou.events.ConnectEvent;
 import chat.mou.events.ErrorEvent;
-import chat.mou.events.MessageEvent;
 import chat.mou.events.ReadEvent;
 import chat.mou.security.KeyStore;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.event.ApplicationEventMulticaster;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 
 @Component
 @Scope("singleton")
-public class ClientSocketConnection implements RunnableSocketConnection
+public class ClientSocketConnection extends SocketConnection
 {
-    private final ApplicationEventMulticaster eventMulticaster;
-    private final KeyStore keyStore;
-
-    private InetSocketAddress connectAddress = new InetSocketAddress(InetAddress.getLoopbackAddress(), 8080);
-    private AsynchronousSocketChannel clientChannel;
-
     @Autowired
     public ClientSocketConnection(ConfigurableApplicationContext applicationContext, KeyStore keyStore)
     {
-        eventMulticaster =
-            applicationContext.getBean(AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME,
-            ApplicationEventMulticaster.class
-        );
-
-        this.keyStore = keyStore;
-    }
-
-    private ApplicationListener<MessageEvent> onMessageEvent = this::_onMessageEvent;
-
-    public void _onMessageEvent(MessageEvent event)
-    {
-        if (clientChannel != null && clientChannel.isOpen()) {
-            try {
-                final var message = new Message(Message.Type.TEXT, keyStore.encryptMessage(event.getBody()));
-                clientChannel.write(ByteBuffer.wrap(Message.serialize(message)));
-            }
-            catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }
+        super(applicationContext, keyStore);
     }
 
     private final CompletionHandler<Void, Void> connectHandler = new CompletionHandler<>()
@@ -103,10 +71,17 @@ public class ClientSocketConnection implements RunnableSocketConnection
 
                 if (message.getType().equals(Message.Type.KEY)) {
                     keyStore.setAndDecodeExternalPublicKey(message.getData());
+
+                    // Print encoded public key
+                    System.out.println("Host public key:\n" + new String(message.getData()) + "\n");
                 }
                 else if (message.getType().equals(Message.Type.TEXT)) {
                     final var data = keyStore.decryptMessage(message.getData());
                     eventMulticaster.multicastEvent(new ReadEvent(this, data));
+
+                    // Print encrypted and decrypted message data
+                    System.out.println("Host encrypted message:\n" + new String(message.getData()) + "\n");
+                    System.out.println("Host decrypted message:\n" + new String(data) + "\n");
                 }
             }
             catch (Exception exception) {
@@ -130,7 +105,7 @@ public class ClientSocketConnection implements RunnableSocketConnection
     {
         try {
             clientChannel = AsynchronousSocketChannel.open();
-            clientChannel.connect(connectAddress, null, connectHandler);
+            clientChannel.connect(address, null, connectHandler);
         }
         catch (IOException exception) {
             exception.printStackTrace();
@@ -154,8 +129,21 @@ public class ClientSocketConnection implements RunnableSocketConnection
     }
 
     @Override
-    public void setAddress(InetSocketAddress connectAddress)
+    public boolean isHost()
     {
-        this.connectAddress = connectAddress;
+        return false;
+    }
+
+    @Override
+    public String getSimplifiedAddress()
+    {
+        try {
+            return clientChannel.getRemoteAddress().toString();
+        }
+        catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        return address.toString();
     }
 }

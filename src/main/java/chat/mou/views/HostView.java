@@ -1,12 +1,10 @@
 package chat.mou.views;
 
 import chat.mou.events.AcceptEvent;
-import chat.mou.events.ConnectEvent;
 import chat.mou.events.ErrorEvent;
 import chat.mou.events.ViewEvent;
-import chat.mou.network.ClientSocketConnection;
 import chat.mou.network.HostSocketConnection;
-import chat.mou.network.SocketConnectionManager;
+import chat.mou.network.ConnectionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
@@ -21,14 +19,13 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.URI;
 
 @Component
 @Scope("singleton")
 public class HostView extends VBox
 {
     private final ApplicationEventPublisher eventPublisher;
-    private final SocketConnectionManager connectionManager;
+    private final ConnectionManager connectionManager;
     private final HostSocketConnection socketConnection;
 
     @FXML
@@ -37,7 +34,7 @@ public class HostView extends VBox
     @Autowired
     public HostView(
         ApplicationEventPublisher eventPublisher,
-        SocketConnectionManager connectionManager,
+        ConnectionManager connectionManager,
         HostSocketConnection socketConnection
     )
     {
@@ -56,6 +53,12 @@ public class HostView extends VBox
         this.eventPublisher = eventPublisher;
         this.connectionManager = connectionManager;
         this.socketConnection = socketConnection;
+    }
+
+    @FXML
+    public void handleSwitchToClientView(MouseEvent event)
+    {
+        eventPublisher.publishEvent(new ViewEvent(this, ClientView.class));
     }
 
     @FXML

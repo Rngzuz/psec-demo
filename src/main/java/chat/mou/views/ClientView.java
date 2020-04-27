@@ -1,10 +1,11 @@
 package chat.mou.views;
 
+import chat.mou.events.AcceptEvent;
 import chat.mou.events.ConnectEvent;
 import chat.mou.events.ErrorEvent;
 import chat.mou.events.ViewEvent;
 import chat.mou.network.ClientSocketConnection;
-import chat.mou.network.SocketConnectionManager;
+import chat.mou.network.ConnectionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextField;
@@ -22,23 +23,23 @@ import java.net.URI;
 
 @Component
 @Scope("singleton")
-public class ConnectView extends VBox
+public class ClientView extends VBox
 {
     private final ApplicationEventPublisher eventPublisher;
-    private final SocketConnectionManager connectionManager;
+    private final ConnectionManager connectionManager;
     private final ClientSocketConnection socketConnection;
 
     @FXML
     private TextField ipAddress;
 
     @Autowired
-    public ConnectView(
+    public ClientView(
         ApplicationEventPublisher eventPublisher,
-        SocketConnectionManager connectionManager,
+        ConnectionManager connectionManager,
         ClientSocketConnection socketConnection
     )
     {
-        final var loader = new FXMLLoader(getClass().getResource("/ConnectView.fxml"));
+        final var loader = new FXMLLoader(getClass().getResource("/ClientView.fxml"));
         loader.setController(this);
         loader.setRoot(this);
 
@@ -46,13 +47,19 @@ public class ConnectView extends VBox
             loader.load();
         }
         catch (IOException exception) {
-            // TODO: Handle ConnectView.fxml loading error better
+            // TODO: Handle ClientView.fxml loading error better
             throw new RuntimeException(exception);
         }
 
         this.eventPublisher = eventPublisher;
         this.connectionManager = connectionManager;
         this.socketConnection = socketConnection;
+    }
+
+    @FXML
+    public void handleSwitchToHostView(MouseEvent event)
+    {
+        eventPublisher.publishEvent(new ViewEvent(this, HostView.class));
     }
 
     @FXML

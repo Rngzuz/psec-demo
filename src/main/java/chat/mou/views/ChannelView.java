@@ -1,12 +1,12 @@
 package chat.mou.views;
 
 import chat.mou.events.*;
-import chat.mou.network.ClientSocketConnection;
-import chat.mou.network.SocketConnectionManager;
+import chat.mou.network.ConnectionManager;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -24,15 +24,20 @@ import java.io.IOException;
 public class ChannelView extends VBox
 {
     private final ApplicationEventPublisher eventPublisher;
-    private final SocketConnectionManager connectionManager;
+    private final ConnectionManager connectionManager;
+
+    @FXML
+    private Label title;
+
+    @FXML
+    private ScrollPane scrollPane;
 
     @FXML
     private VBox vBox;
 
     @Autowired
     public ChannelView(
-        ApplicationEventPublisher eventPublisher,
-        SocketConnectionManager connectionManager
+        ApplicationEventPublisher eventPublisher, ConnectionManager connectionManager
     )
     {
         final var loader = new FXMLLoader(getClass().getResource("/ChannelView.fxml"));
@@ -49,6 +54,11 @@ public class ChannelView extends VBox
 
         this.eventPublisher = eventPublisher;
         this.connectionManager = connectionManager;
+
+        // Scroll to bottom when a new message is added
+        vBox.heightProperty().addListener(observable -> {
+            scrollPane.setVvalue(1);
+        });
     }
 
     private void addMessage(String message)
@@ -60,7 +70,13 @@ public class ChannelView extends VBox
     public void dispatchCloseEvent()
     {
         connectionManager.closeSocketConnection();
-        eventPublisher.publishEvent(new ViewEvent(this, ConnectView.class));
+
+        if (connectionManager.isHost()) {
+            eventPublisher.publishEvent(new ViewEvent(this, HostView.class));
+        }
+        else {
+            eventPublisher.publishEvent(new ViewEvent(this, ClientView.class));
+        }
     }
 
     @FXML
@@ -86,9 +102,22 @@ public class ChannelView extends VBox
     }
 
     @EventListener
-    public void onErrorEvent(ErrorEvent event) {
+    public void onErrorEvent(ErrorEvent event)
+    {
         if (event.getType().equals(ErrorEvent.Type.READ_ERROR)) {
             dispatchCloseEvent();
+        }
+    }
+
+    @EventListener(classes = {AcceptEvent.class, ConnectEvent.class})
+    public void onAcceptAndConnect()
+    {
+        if (connectionManager.isOpen()) {
+
+            final var titleText = (connectionManager.isHost() ? "Hosted on " : "Connected to ") +
+                connectionManager.getSocketConnection().getSimplifiedAddress();
+
+            title.setText(titleText);
         }
     }
 }
